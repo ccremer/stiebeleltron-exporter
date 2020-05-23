@@ -1,0 +1,80 @@
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:status:
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:ext-relative: {outfilesuffix}
+endif::[]
+
+= Stiebel-Eltron Exporter
+
+ifdef::status[]
+image:https://img.shields.io/github/workflow/status/ccremer/stiebeleltron-exporter/Build/master[Build,link=https://github.com/ccremer/stiebeleltron-exporter/actions?query=workflow%3ABuild]
+image:https://img.shields.io/codeclimate/maintainability/ccremer/stiebeleltron-exporter[Maintainability,link=https://codeclimate.com/github/ccremer/stiebeleltron-exporter]
+image:https://img.shields.io/codeclimate/coverage/ccremer/stiebeleltron-exporter[Tests,link=https://codeclimate.com/github/ccremer/stiebeleltron-exporter]
+image:https://img.shields.io/github/v/release/ccremer/stiebeleltron-exporter[Releases,link=https://github.com/ccremer/stiebeleltron-exporter/releases]
+image:https://img.shields.io/github/license/ccremer/stiebeleltron-exporter[License,link=https://github.com/ccremer/stiebeleltron-exporter/blob/master/LICENSE]
+image:https://img.shields.io/docker/pulls/ccremer/stiebeleltron-exporter[Docker image,link=https://hub.docker.com/r/ccremer/stiebeleltron-exporter]
+endif::[]
+
+== About
+
+Scrapes a Stiebel-Eltron ISG installation and converts sensor data to Prometheus metrics.
+It has been tested with ISG 10.2.0.
+
+== Installing
+
+=== Traditional packages or binary
+
+. Download latest binary or package from the https://github.com/ccremer/stiebeleltron-exporter/releases[Releases page]
+. `dpkg -i stiebeleltron-exporter_linux_amd64.deb` (Debian/Ubuntu)
+. `rpm -i stiebeleltron-exporter_linux_amd64.rpm` (CentOS)
+. `chmod +x stiebeleltron-exporter && mv stiebeleltron-exporter /usr/local/bin/`
+
+=== Docker
+
+. `docker run -d --name stiebeleltron-exporter -p "8080:8080" ccremer/stiebeleltron-exporter`
+
+=== Helm Chart
+
+_not yet existing_
+
+== Usage
+
+[source,console]
+----
+stiebeleltron-exporter
+----
+
+Upon each call to `/metrics`, the exporter will do a GET request on the given URL, and translate the JSON
+response to Prometheus metrics format.
+
+== Configuration
+
+`stiebeleltron-exporter` can be configured with CLI flags. Call the binary with `--help` to get a list of options.
+
+TIP: All flags are also configurable with Environment variables. Replace the `.` char with `_` and
+     uppercase the names in order for them to be recognized, e.g. `--log.level debug` becomes
+     `LOG_LEVEL=debug`. CLI flags take precedence though.
+
+== As a client API
+
+See link:examples/client.go[Example]
+
+== Developing
+
+=== Requirements
+
+* Go
+* https://github.com/goreleaser/goreleaser[Goreleaser] (for packaging)
+
+=== Building
+
+. `make build`
+
+=== Tests
+
+. `make test`
