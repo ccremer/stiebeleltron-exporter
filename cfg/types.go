@@ -1,6 +1,9 @@
 package cfg
 
-import "time"
+import (
+	"stiebeleltron-exporter/pkg/metrics"
+	"time"
+)
 
 type (
 	// Configuration holds a strongly-typed tree of the configuration
@@ -14,7 +17,8 @@ type (
 			Timeout time.Duration
 			Headers []string `mapstructure:"header"`
 		}
-		BindAddr string
+		BindAddr   string
+		Properties map[string]*metrics.MetricProperty
 	}
 )
 
@@ -25,5 +29,6 @@ func NewDefaultConfig() *Configuration {
 	c.ISG.URL = "http://isg.ip.or.hostname"
 	c.ISG.Timeout = 5 * time.Second
 	c.BindAddr = ":8080"
+	c.Properties = metrics.NewDefaultMetricProperties()
 	return c
 }
