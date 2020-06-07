@@ -2,9 +2,9 @@ package stiebeleltron
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/pacificporter/surf"
-	"github.com/pacificporter/surf/browser"
 	log "github.com/sirupsen/logrus"
+	"github.com/sp0x/surf"
+	"github.com/sp0x/surf/browser"
 	"net/http"
 	"strconv"
 	"strings"
