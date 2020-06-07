@@ -2,16 +2,23 @@ package cfg
 
 import (
 	"fmt"
+	"github.com/knadh/koanf"
+	"github.com/knadh/koanf/parsers/yaml"
+	"github.com/knadh/koanf/providers/env"
+	"github.com/knadh/koanf/providers/file"
+	"github.com/knadh/koanf/providers/posflag"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
-	"github.com/spf13/viper"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 )
 
-// ParseConfig overrides internal config defaults with up CLI flags, environment variables and ensures basic validation.
+var k = koanf.New(".")
+
+// ParseConfig overrides internal config defaults with an optional YAML file, then environment variables and lastly CLI flags.
+// Ensures basic validation.
 func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) *Configuration {
 	config := NewDefaultConfig()
 
@@ -27,17 +34,36 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	fs.StringP("isg.url", "u", config.ISG.URL, "Target URL of Stiebel Eltron ISG device")
 	fs.Int64("isg.timeout", int64(config.ISG.Timeout.Seconds()),
 		"Timeout in seconds when collecting metrics from Stiebel Eltron ISG. Should not be larger than the scrape interval")
-	if err := viper.BindPFlags(fs); err != nil {
-		log.WithError(err).Fatal("Could not bind flags")
-	}
+	fs.String("config", "", "Configuration file that may hold translations of metric names. Accepts full and relative path to a .yaml file")
 
 	if err := fs.Parse(args); err != nil {
 		log.WithError(err).Fatal("Could not parse flags")
 	}
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
-	viper.AutomaticEnv()
 
-	if err := viper.Unmarshal(config); err != nil {
+	path, _ := fs.GetString("config")
+	if path != "" {
+		log.WithFields(log.Fields{
+			"path": path,
+		}).Info("Loading configuration")
+		err := k.Load(file.Provider(path), yaml.Parser())
+		if err != nil {
+			log.WithError(err).Fatal("Could not load config file")
+		}
+	}
+
+	err := k.Load(env.Provider("", ".", func(s string) string {
+		return strings.Replace(strings.ToLower(s), "_", ".", -1)
+	}), nil)
+	if err != nil {
+		log.WithError(err).Fatal("Could not load environment variables")
+	}
+
+	err = k.Load(posflag.Provider(fs, ".", k), nil)
+	if err != nil {
+		log.WithError(err).Fatal("Could not load CLI flags")
+	}
+
+	if err := k.Unmarshal("", config); err != nil {
 		log.WithError(err).Fatal("Could not read config")
 	}
 
