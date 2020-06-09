@@ -130,13 +130,14 @@ func TestParseConfig(t *testing.T) {
 			},
 		},
 		{
-			name: "GivenHeaderEnvVar_WhenMultipleHeadersSpecified_ThenFillArray",
+			name: "GivenHeaderEnvVar_WhenMultipleHeadersSpecified_ThenTreatAsOne",
 			envs: map[string]string{
 				"ISG_HEADER": "key1=value1, KEY2= value2",
 			},
 			verify: func(c *Configuration) {
-				assert.Contains(t, c.ISG.Headers, "key1=value1")
-				assert.Contains(t, c.ISG.Headers, " KEY2= value2")
+				// Unlike viper, Koanf does not support multiple entries in single ENV var via comma separation.
+				// Use the config file or CLI flags to provide those
+				assert.Contains(t, c.ISG.Headers, "key1=value1, KEY2= value2")
 			},
 		},
 		{

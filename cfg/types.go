@@ -15,7 +15,7 @@ type (
 		ISG struct {
 			URL     string
 			Timeout time.Duration
-			Headers []string `mapstructure:"header"`
+			Headers []string `koanf:"header"`
 		}
 		BindAddr   string
 		Properties map[string]*metrics.MetricProperty

@@ -1,7 +1,6 @@
 package stiebeleltron
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
@@ -19,7 +18,6 @@ func TestISGClient_GetSystemInfo_GivenHTML_WhenDefaultAssignment_ThenParseValues
 	c, err := NewISGClient(ClientOptions{
 		URL: server.URL,
 	})
-	log.SetLevel(log.DebugLevel)
 	require.NoError(t, err)
 
 	result, parseErrors, err := c.GetSystemInfo(NewSystemInfoDefaultAssignments())
@@ -37,7 +35,6 @@ func TestISGClient_GetHeatPumpInfo_GivenHTML_WhenDefaultAssignment_ThenParseValu
 	c, err := NewISGClient(ClientOptions{
 		URL: server.URL,
 	})
-	log.SetLevel(log.DebugLevel)
 	require.NoError(t, err)
 
 	result, parseErrors, err := c.GetHeatPumpInfo(NewHeatPumpInfoDefaultAssignments())

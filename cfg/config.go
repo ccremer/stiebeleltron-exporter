@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-var k = koanf.New(".")
-
 // ParseConfig overrides internal config defaults with an optional YAML file, then environment variables and lastly CLI flags.
 // Ensures basic validation.
 func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) *Configuration {
@@ -40,6 +38,7 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 		log.WithError(err).Fatal("Could not parse flags")
 	}
 
+	k := koanf.New(".")
 	path, _ := fs.GetString("config")
 	if path != "" {
 		log.WithFields(log.Fields{
