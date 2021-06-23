@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"stiebeleltron-exporter/cfg"
+	"stiebeleltron-exporter/pkg/metrics"
 	"stiebeleltron-exporter/pkg/stiebeleltron"
 	"time"
 )
@@ -55,7 +56,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	m := MergeProperties(config.Properties, stiebeleltron.NewSystemInfoDefaultAssignments())
+	m := MergeProperties(make(map[string]*metrics.MetricProperty), stiebeleltron.NewSystemInfoDefaultAssignments())
 	m = MergeProperties(m, stiebeleltron.NewHeatPumpInfoDefaultAssignments())
 	PrepareGauges(m)
 

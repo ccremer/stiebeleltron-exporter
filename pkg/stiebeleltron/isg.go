@@ -1,10 +1,14 @@
+//go:generate go run github.com/rakyll/statik -m -src=./ -Z -include=*.yaml -dest ../ -p stiebeleltron
+
 package stiebeleltron
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"github.com/rakyll/statik/fs"
 	log "github.com/sirupsen/logrus"
 	"github.com/sp0x/surf"
 	"github.com/sp0x/surf/browser"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -212,6 +216,22 @@ func extractValue(v string) (float64, error) {
 	return strconv.ParseFloat(rawValue, 64)
 }
 
+func getProperties() []byte {
+	statikFs, err := fs.New()
+	if err != nil {
+		log.WithError(err).Fatal("Cannot create internal filesystem")
+	}
+	r, err := statikFs.Open("/isg_english.yaml")
+	if err != nil {
+		log.WithError(err).Fatal("Cannot open embedded file")
+	}
+	defer r.Close()
+	contents, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.WithError(err).Fatal(err)
+	}
+	return contents
+}
 func assignValue(a Assignments, group, property string, v float64) {
 	for key, as := range a {
 		if as.GetGroup() == group && as.GetSearchString() == property {

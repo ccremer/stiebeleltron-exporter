@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"stiebeleltron-exporter/pkg/metrics"
 	"stiebeleltron-exporter/pkg/stiebeleltron"
+	"strings"
 	"time"
 )
 
@@ -117,7 +118,7 @@ func scrapeISGasync(c *stiebeleltron.ISGClient, m map[string]*metrics.MetricProp
 func setMetricDelegate(m map[string]*metrics.MetricProperty) func(string, string, float64) {
 	return func(group, key string, value float64) {
 		for prop, ma := range m {
-			if ma.PropertyGroup == group && ma.SearchString == key {
+			if strings.EqualFold(ma.PropertyGroup, group) && ma.SearchString == key {
 				if ma.ValueTransformer != nil {
 					value = ma.ValueTransformer(value)
 				}

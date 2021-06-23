@@ -7,8 +7,11 @@ import (
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
+	"github.com/knadh/koanf/providers/rawbytes"
+	"github.com/rakyll/statik/fs"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -39,6 +42,11 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	}
 
 	k := koanf.New(".")
+	err := k.Load(rawbytes.Provider(getMetricDefaults()), yaml.Parser())
+	if err != nil {
+		log.WithError(err).Fatal("Could not embedded default file")
+	}
+
 	path, _ := fs.GetString("config")
 	if path != "" {
 		log.WithFields(log.Fields{
@@ -50,7 +58,7 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 		}
 	}
 
-	err := k.Load(env.Provider("", ".", func(s string) string {
+	err = k.Load(env.Provider("", ".", func(s string) string {
 		return strings.Replace(strings.ToLower(s), "_", ".", -1)
 	}), nil)
 	if err != nil {
@@ -80,6 +88,23 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	}
 	log.WithField("config", *config).Debug("Parsed config")
 	return config
+}
+
+func getMetricDefaults() []byte {
+	statikFs, err := fs.New()
+	if err != nil {
+		log.WithError(err).Fatal("Cannot create internal filesystem")
+	}
+	r, err := statikFs.Open("/english.yaml")
+	if err != nil {
+		log.WithError(err).Fatal("Cannot open embedded file")
+	}
+	defer r.Close()
+	contents, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.WithError(err).Fatal(err)
+	}
+	return contents
 }
 
 // ConvertHeaders takes a list of `key=value` headers and adds those trimmed to the specified header struct. It ignores

@@ -1,7 +1,9 @@
+//go:generate go run github.com/rakyll/statik -m -src=./ -Z -include=*.yaml -dest ../ -p cfg
+
 package cfg
 
 import (
-	"stiebeleltron-exporter/pkg/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 	"time"
 )
 
@@ -18,7 +20,16 @@ type (
 			Headers []string `koanf:"header"`
 		}
 		BindAddr   string
-		Properties map[string]*metrics.MetricProperty
+		Properties map[string]MetricProperty
+	}
+	MetricProperty struct {
+		GaugeName        string
+		Labels           map[string]string
+		HelpText         string
+		Gauge            prometheus.Gauge
+		PropertyGroup    string
+		SearchString     string
+		ValueTransformer func(v float64) float64
 	}
 )
 
@@ -29,6 +40,6 @@ func NewDefaultConfig() *Configuration {
 	c.ISG.URL = "http://isg.ip.or.hostname"
 	c.ISG.Timeout = 5 * time.Second
 	c.BindAddr = ":8080"
-	c.Properties = metrics.NewDefaultMetricProperties()
+	//c.Properties = metrics.NewDefaultMetricProperties()
 	return c
 }
