@@ -1,6 +1,6 @@
 package stiebeleltron
 
-// NewSystemInfoDefaultAssignmentImpls creates a hardcoded internal PropertyImpl map in English for system info page.
+// NewSystemInfoDefaultAssignments creates a hardcoded internal PropertyImpl map in English for system info page.
 func NewSystemInfoDefaultAssignments() Assignments {
 	generalGroup := "GENERAL"
 	heatingGroup := "HEATING"
@@ -37,7 +37,7 @@ func NewSystemInfoDefaultAssignments() Assignments {
 	}
 }
 
-// NewHeatPumpInfoDefaultAssignmentImpls creates a hardcoded internal PropertyImpl map in English for heat pump info page.
+// NewHeatPumpInfoDefaultAssignments creates a hardcoded internal PropertyImpl map in English for heat pump info page.
 func NewHeatPumpInfoDefaultAssignments() Assignments {
 	runtimeGroup := "RUNTIME"
 	amountOfHeatGroup := "AMOUNT OF HEAT"

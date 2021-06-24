@@ -1,10 +1,9 @@
-//go:generate go run github.com/rakyll/statik -m -src=./ -Z -include=*.yaml -dest ../ -p cfg
-
 package cfg
 
 import (
-	"github.com/prometheus/client_golang/prometheus"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type (

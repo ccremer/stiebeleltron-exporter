@@ -1,21 +1,26 @@
 package cfg
 
 import (
+	_ "embed"
 	"fmt"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
 	"github.com/knadh/koanf/providers/env"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/providers/posflag"
 	"github.com/knadh/koanf/providers/rawbytes"
-	"github.com/rakyll/statik/fs"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"strings"
-	"time"
+)
+
+var (
+	//go:embed defaults.yaml
+	DefaultMetrics []byte
 )
 
 // ParseConfig overrides internal config defaults with an optional YAML file, then environment variables and lastly CLI flags.
@@ -42,7 +47,7 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	}
 
 	k := koanf.New(".")
-	err := k.Load(rawbytes.Provider(getMetricDefaults()), yaml.Parser())
+	err := k.Load(rawbytes.Provider(DefaultMetrics), yaml.Parser())
 	if err != nil {
 		log.WithError(err).Fatal("Could not embedded default file")
 	}
@@ -88,23 +93,6 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	}
 	log.WithField("config", *config).Debug("Parsed config")
 	return config
-}
-
-func getMetricDefaults() []byte {
-	statikFs, err := fs.New()
-	if err != nil {
-		log.WithError(err).Fatal("Cannot create internal filesystem")
-	}
-	r, err := statikFs.Open("/english.yaml")
-	if err != nil {
-		log.WithError(err).Fatal("Cannot open embedded file")
-	}
-	defer r.Close()
-	contents, err := ioutil.ReadAll(r)
-	if err != nil {
-		log.WithError(err).Fatal(err)
-	}
-	return contents
 }
 
 // ConvertHeaders takes a list of `key=value` headers and adds those trimmed to the specified header struct. It ignores
