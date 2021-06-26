@@ -129,54 +129,10 @@ type (
 )
 
 var (
-	SystemInfoPageQuery          = "?s=1,0"
-	HeatPumpInfoPageQuery        = "?s=1,1"
 	PropertyTableQueryExpression = "form#werte table.info tbody"
 
 	//go:embed isg_english.yaml
 	IsgDefinition []byte
-)
-
-const (
-	GeneralOutsideTemperature      = "General.OutsideTemperature"
-	GeneralCondenserTemperature    = "General.CondenserTemperature"
-	GeneralFlow                    = "General.Flow"
-	GeneralHeatingCircuitPressure  = "General.HeatingCircuitPressure"
-	GeneralOutputActivityHeatPump  = "General.OutputActivity.HeatPump"
-	GeneralOutputActivityWaterPump = "General.OutputActivity.WaterPump"
-
-	RoomTemperatureHeatingCircuit1ActualTemperature = "RoomTemperature.HeatingCircuit1.ActualTemperature"
-	RoomTemperatureHeatingCircuit1SetTemperature    = "RoomTemperature.HeatingCircuit1.SetTemperature"
-	RoomTemperatureHeatingCircuit2ActualTemperature = "RoomTemperature.HeatingCircuit2.ActualTemperature"
-	RoomTemperatureHeatingCircuit2SetTemperature    = "RoomTemperature.HeatingCircuit2.SetTemperature"
-
-	DomesticHotWaterActualTemperature                             = "DomesticHotWater.ActualTemperature"
-	DomesticHotWaterSetTemperature                                = "DomesticHotWater.SetTemperature"
-	ElectricReheatingDualModeReheatingHeatingTemperature          = "ElectricReheating.DualModeReheating.HeatingTemperature"
-	ElectricReheatingDualModeReheatingDomesticHotWaterTemperature = "ElectricReheating.DualModeReheating.DomesticHotWaterTemperature"
-
-	HeatingHeatingCircuit1ActualTemperature = "Heating.HeatingCircuit1.ActualTemperature"
-	HeatingHeatingCircuit1SetTemperature    = "Heating.HeatingCircuit1.SetTemperature"
-	HeatingHeatingCircuit2ActualTemperature = "Heating.HeatingCircuit2.ActualTemperature"
-	HeatingHeatingCircuit2SetTemperature    = "Heating.HeatingCircuit2.SetTemperature"
-	HeatingFlowActualTemperatureHeatPump    = "Heating.Flow.ActualTemperatureHeatPump"
-	HeatingFlowActualTemperatureReheating   = "Heating.Flow.ActualTemperatureReheating"
-	HeatingFlowActualPreFlowTemperature     = "Heating.Flow.ActualPreFlowTemperature"
-	HeatingBufferActualTemperature          = "Heating.Buffer.ActualTemperature"
-	HeatingBufferSetTemperature             = "Heating.Buffer.SetTemperature"
-	HeatingFixedTemperatureSetTemperature   = "Heating.FixedTemperature.SetTemperature"
-
-	RemainingCompressorRestingTime = "RemainingCompressorRestingTime"
-	RuntimeHeating                 = "Runtime.Heating"
-	RuntimeDomesticHotWater        = "Runtime.DomesticHotWater"
-	RuntimeReheating1              = "Runtime.Reheating1"
-	RuntimeReheating2              = "Runtime.Reheating2"
-
-	EnergyHeatingDay            = "Energy.Heating.Day"
-	EnergyHeatingTotal          = "Energy.Heating.Total"
-	EnergyDomesticHotWaterDay   = "Energy.DomesticHotWater.Day"
-	EnergyDomesticHotWaterTotal = "Energy.DomesticHotWater.Total"
-	EnergyReheatingTotal        = "Energy.Reheating.Total"
 )
 
 func (a *PropertyImpl) GetGroup() string {
@@ -233,88 +189,6 @@ func assignValue(a Assignments, group, property string, v float64) {
 		"property": property,
 		"value":    v,
 	}).Warn("Could not find a matching API property")
-}
-
-func collectSystemInfoValues(a Assignments) *SystemInfo {
-	s := &SystemInfo{}
-	s.General.OutsideTemperature = getValueFromAssignment(a, GeneralOutsideTemperature)
-	s.General.CondenserTemperature = getValueFromAssignment(a, GeneralCondenserTemperature)
-	s.General.Flow = getValueFromAssignment(a, GeneralFlow)
-	s.General.HeatingCircuitPressure = getValueFromAssignment(a, GeneralHeatingCircuitPressure)
-	s.General.OutputActivity.HeatPump = getValueFromAssignment(a, GeneralOutputActivityHeatPump)
-	s.General.OutputActivity.WaterPump = getValueFromAssignment(a, GeneralOutputActivityWaterPump)
-
-	s.RoomTemperature.HeatingCircuit1.ActualTemperature = getValueFromAssignment(a, RoomTemperatureHeatingCircuit1ActualTemperature)
-	s.RoomTemperature.HeatingCircuit1.SetTemperature = getValueFromAssignment(a, RoomTemperatureHeatingCircuit1SetTemperature)
-	s.RoomTemperature.HeatingCircuit2.ActualTemperature = getValueFromAssignment(a, RoomTemperatureHeatingCircuit2ActualTemperature)
-	s.RoomTemperature.HeatingCircuit2.SetTemperature = getValueFromAssignment(a, RoomTemperatureHeatingCircuit2SetTemperature)
-
-	s.DomesticHotWater.ActualTemperature = getValueFromAssignment(a, DomesticHotWaterActualTemperature)
-	s.DomesticHotWater.SetTemperature = getValueFromAssignment(a, DomesticHotWaterSetTemperature)
-
-	s.ElectricReheating.DualModeReheating.DomesticHotWaterTemperature = getValueFromAssignment(a, ElectricReheatingDualModeReheatingDomesticHotWaterTemperature)
-	s.ElectricReheating.DualModeReheating.HeatingTemperature = getValueFromAssignment(a, ElectricReheatingDualModeReheatingHeatingTemperature)
-
-	s.Heating.HeatingCircuit1.ActualTemperature = getValueFromAssignment(a, HeatingHeatingCircuit1ActualTemperature)
-	s.Heating.HeatingCircuit1.SetTemperature = getValueFromAssignment(a, HeatingHeatingCircuit1SetTemperature)
-	s.Heating.HeatingCircuit2.ActualTemperature = getValueFromAssignment(a, HeatingHeatingCircuit2ActualTemperature)
-	s.Heating.HeatingCircuit2.SetTemperature = getValueFromAssignment(a, HeatingHeatingCircuit2SetTemperature)
-	s.Heating.Flow.ActualPreFlowTemperature = getValueFromAssignment(a, HeatingFlowActualPreFlowTemperature)
-	s.Heating.Flow.ActualTemperatureHeatPump = getValueFromAssignment(a, HeatingFlowActualTemperatureHeatPump)
-	s.Heating.Flow.ActualTemperatureReheating = getValueFromAssignment(a, HeatingFlowActualTemperatureReheating)
-	s.Heating.Buffer.ActualTemperature = getValueFromAssignment(a, HeatingBufferActualTemperature)
-	s.Heating.Buffer.SetTemperature = getValueFromAssignment(a, HeatingBufferSetTemperature)
-	s.Heating.FixedTemperature.SetTemperature = getValueFromAssignment(a, HeatingFixedTemperatureSetTemperature)
-	return s
-}
-
-func collectHeatPumpInfoValues(a Assignments) *HeatPumpInfo {
-	s := &HeatPumpInfo{}
-	s.Energy.DomesticHotWater.Day = getValueFromAssignment(a, EnergyDomesticHotWaterDay)
-	s.Energy.DomesticHotWater.Total = getValueFromAssignment(a, EnergyDomesticHotWaterTotal)
-	s.Energy.Heating.Day = getValueFromAssignment(a, EnergyHeatingDay)
-	s.Energy.Heating.Total = getValueFromAssignment(a, EnergyHeatingTotal)
-	s.Energy.Reheating.Total = getValueFromAssignment(a, EnergyReheatingTotal)
-	s.RemainingCompressorRestingTime = getValueFromAssignment(a, RemainingCompressorRestingTime)
-	s.Runtime.Heating = getValueFromAssignment(a, RuntimeHeating)
-	s.Runtime.DomesticHotWater = getValueFromAssignment(a, RuntimeDomesticHotWater)
-	s.Runtime.Reheating1 = getValueFromAssignment(a, RuntimeReheating1)
-	s.Runtime.Reheating2 = getValueFromAssignment(a, RuntimeReheating2)
-	return s
-}
-
-func getValueFromAssignment(a Assignments, path string) float64 {
-	return a[path].GetValue()
-}
-
-func (c *ISGClient) GetSystemInfo(a map[string]Property) (*SystemInfo, []ParseError, error) {
-	err := c.LoadSystemInfoPage()
-	if err != nil {
-		return nil, nil, err
-	}
-	p := c.ParsePage(func(group, key string, value float64) {
-		assignValue(a, group, key, value)
-	})
-	return collectSystemInfoValues(a), p, nil
-}
-
-func (c *ISGClient) GetHeatPumpInfo(a map[string]Property) (*HeatPumpInfo, []ParseError, error) {
-	err := c.browser.Open(c.Options.URL + HeatPumpInfoPageQuery)
-	if err != nil {
-		return nil, nil, err
-	}
-	p := c.ParsePage(func(group, key string, value float64) {
-		assignValue(a, group, key, value)
-	})
-	return collectHeatPumpInfoValues(a), p, nil
-}
-
-func (c *ISGClient) LoadSystemInfoPage() error {
-	return c.browser.Open(c.Options.URL + SystemInfoPageQuery)
-}
-
-func (c *ISGClient) LoadHeatPumpInfoPage() error {
-	return c.browser.Open(c.Options.URL + HeatPumpInfoPageQuery)
 }
 
 func (c *ISGClient) ParsePage(callback func(category, key string, value float64)) []ParseError {

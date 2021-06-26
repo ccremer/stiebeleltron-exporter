@@ -26,7 +26,7 @@ var (
 // ParseConfig overrides internal config defaults with an optional YAML file, then environment variables and lastly CLI flags.
 // Ensures basic validation.
 func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) *Configuration {
-	config := NewDefaultConfig()
+	config := NewDefaultExporterConfig()
 
 	fs.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s (version %s, %s, %s):\n", os.Args[0], version, commit, date)
@@ -47,11 +47,6 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	}
 
 	k := koanf.New(".")
-	err := k.Load(rawbytes.Provider(DefaultMetrics), yaml.Parser())
-	if err != nil {
-		log.WithError(err).Fatal("Could not embedded default file")
-	}
-
 	path, _ := fs.GetString("config")
 	if path != "" {
 		log.WithFields(log.Fields{
@@ -63,7 +58,7 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 		}
 	}
 
-	err = k.Load(env.Provider("", ".", func(s string) string {
+	err := k.Load(env.Provider("", ".", func(s string) string {
 		return strings.Replace(strings.ToLower(s), "_", ".", -1)
 	}), nil)
 	if err != nil {
@@ -115,4 +110,28 @@ func ConvertHeaders(headers []string, header *http.Header) {
 		}).Debug("Using header")
 		header.Set(key, value)
 	}
+}
+
+func LoadMetricDefinitions(configuration *Configuration) *MetricDefinitions {
+	def := &MetricDefinitions{}
+	k := koanf.New(".")
+	err := k.Load(rawbytes.Provider(DefaultMetrics), yaml.Parser())
+	if err != nil {
+		log.WithError(err).Fatal("Could not embedded default file")
+	}
+	if err := k.Unmarshal("", def); err != nil {
+		log.WithError(err).Fatal("Could not read config")
+	}
+	// Set multipliers to 1 if not defined.
+	for _, page := range def.Pages {
+		for _, group := range page.Groups {
+			for _, metric := range group.Metrics {
+				if metric.Multiplier == 0 {
+					metric.Multiplier = 1
+				}
+			}
+		}
+	}
+
+	return def
 }

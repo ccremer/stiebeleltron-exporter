@@ -1,3 +1,180 @@
-properties:
-  General.OutsideTemperature:
-    Category: asdf
+pages:
+  system:
+    urlSuffix: ?s=1,0
+    groups:
+      general:
+        searchString: GENERAL
+        metrics:
+          - name: temperature_outside
+            searchString: OUTSIDE TEMPERATURE
+            description: Outside temperature in degree Celsius
+          - name: temperature_condenser
+            searchString: CONDENSER TEMP.
+            description: Condenser temperature in degree Celsius
+          - name: flow
+            searchString: FLOW RATE
+            divisor: 60
+          - name: heating_circuit_pressure
+            searchString: PRESSURE HTG CIRC
+          - name: output_activity
+            searchString: OUTPUT HP
+            divisor: 100
+            labels:
+              pump: heat
+          - name: output_activity
+            searchString: INT PUMP RATE
+            divisor: 100
+            labels:
+              pump: water
+      room_temperature:
+        searchString: ROOM TEMPERATURE
+        metrics:
+          - name: heating_circuit
+            searchString: ACTUAL TEMPERATURE HC 1
+            description: room temperature in degree Celsius
+            labels:
+              circuit: hc1
+              state: actual
+          - name: heating_circuit
+            searchString: SET TEMPERATURE HC 1
+            labels:
+              circuit: hc1
+              state: target
+          - name: heating_circuit
+            searchString: ACTUAL TEMPERATURE HC 2
+            labels:
+              circuit: hc2
+              state: actual
+          - name: heating_circuit
+            searchString: SET TEMPERATURE HC 2
+            labels:
+              circuit: hc2
+              state: target
+      domestic_hotwater:
+        searchString: DHW
+        metrics:
+          - name: temperature
+            searchString: ACTUAL TEMPERATURE
+            labels:
+              state: actual
+          - name: temperature
+            searchString: SET TEMPERATURE
+            labels:
+              state: target
+      electric_reheating:
+        searchString: ELECTRIC REHEATING
+        metrics:
+          - name: dualmode_reheating_temperature
+            searchString: DUAL MODE TEMP HEATING
+            labels:
+              temperature: heating
+          - name: dualmode_reheating_temperature
+            searchString: DUAL MODE TEMP DHW
+            labels:
+              temperature: domestic_hotwater
+      heating:
+        searchString: HEATING
+        metrics:
+          - name: temperature
+            searchString: ACTUAL TEMPERATURE HC 1
+            description: heating temperature in degree Celsius
+            labels:
+              circuit: hc1
+              state: actual
+          - name: temperature
+            searchString: SET TEMPERATURE HC 1
+            labels:
+              circuit: hc1
+              state: target
+          - name: temperature
+            searchString: ACTUAL TEMPERATURE HC 2
+            labels:
+              circuit: hc2
+              state: actual
+          - name: temperature
+            searchString: SET TEMPERATURE HC 2
+            labels:
+              circuit: hc2
+              state: target
+          - name: flow_temperature
+            searchString: ACTUAL FLOW TEMPERATURE WP
+            labels:
+              state: actual
+              type: heatpump
+          - name: flow_temperature
+            searchString: ACTUAL FLOW TEMPERATURE NHZ
+            labels:
+              state: actual
+              type: reheating
+          - name: flow_temperature
+            searchString: ACTUAL RETURN TEMPERATURE
+            labels:
+              state: actual
+              type: preflow
+          - name: buffer_temperature
+            searchString: ACTUAL BUFFER TEMPERATURE
+            labels:
+              state: actual
+          - name: buffer_temperature
+            searchString: SET BUFFER TEMPERATURE
+            labels:
+              state: target
+          - name: fixed_temperature
+            searchString: SET FIXED TEMPERATURE
+            labels:
+              state: target
+
+  heatpump:
+    urlSuffix: ?s=1,1
+    groups:
+      runtime:
+        searchString: RUNTIME
+        metrics:
+          - name: compressor
+            searchString: RNT COMP 1 HEA
+            description: compressor runtime in percent
+            labels:
+              compressor: heating
+            multiplier: 3600
+          - name: compressor
+            searchString: RNT COMP 1 DHW
+            labels:
+              compressor: domestic_hotwater
+            multiplier: 3600
+          - name: reheating
+            searchString: BH 1
+            labels:
+              circuit: hc1
+            multiplier: 3600
+          - name: reheating
+            searchString: BH 2
+            labels:
+              circuit: hc2
+            multiplier: 3600
+      energy:
+        searchString: AMOUNT OF HEAT
+        metrics:
+          - name: heating_day
+            searchString: COMPRESSOR HEATING DAY
+            description: compressor heat energy today in Ws
+            multiplier: 3.6e+6
+          - name: heating_total
+            searchString: COMPRESSOR HEATING TOTAL
+            description: compressor heat energy total in Ws
+            multiplier: 3.6e+9
+          - name: heating_total
+            searchString: COMPRESSOR DHW DAY
+            description: domestic hotwater compressor heat energy today in Ws
+            multiplier: 3.6e+6
+          - name: heating_total
+            searchString: COMPRESSOR DHW TOTAL
+            description: domestic hotwater compressor heat energy total in Ws
+            multiplier: 3.6e+9
+          - name: heating_total
+            searchString: BH HEATING TOTAL
+            multiplier: 3.6e+9
+      process_data:
+        searchString: PROCESS DATA
+        metrics:
+          - name: compressor_delay_counter
+            searchString: COMP DLAY CNTR

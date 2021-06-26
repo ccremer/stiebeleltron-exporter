@@ -1,12 +1,13 @@
 package stiebeleltron
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestISGClient_GetSystemInfo_GivenHTML_WhenDefaultAssignment_ThenParseValues(t *testing.T) {
