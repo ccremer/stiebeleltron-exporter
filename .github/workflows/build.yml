@@ -44,7 +44,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-go-
     - name: Test & Publish Code Coverage
-      uses: paambaati/codeclimate-action@v2.6.0
+      uses: paambaati/codeclimate-action@v3.0.0
       env:
         CC_TEST_REPORTER_ID: a1d37ef5008cd3d7e3811e3e7cc83708acd23250124ebbcdbe51f7c23e5bcb24
       with:
