@@ -19,8 +19,7 @@ type (
 			Headers        []string `koanf:"header"`
 			DefinitionPath string
 		}
-		BindAddr   string
-		Properties map[string]MetricProperty
+		BindAddr string
 	}
 	MetricDefinitions struct {
 		Pages []Page
@@ -36,19 +35,9 @@ type (
 	Metric struct {
 		Name        string
 		Description string
-		Multiplier  float64
-		Divisor     float64
+		Multiplier  *float64
+		Divisor     *float64
 		Labels      prometheus.Labels
-		Gauge       prometheus.Gauge
-	}
-	MetricProperty struct {
-		GaugeName        string
-		Labels           map[string]string
-		HelpText         string
-		Gauge            prometheus.Gauge
-		PropertyGroup    string
-		SearchString     string
-		ValueTransformer func(v float64) float64
 	}
 )
 
@@ -59,6 +48,19 @@ func NewDefaultExporterConfig() *Configuration {
 	c.ISG.URL = "http://isg.ip.or.hostname"
 	c.ISG.Timeout = 5 * time.Second
 	c.BindAddr = ":8080"
-	//c.Properties = metrics.NewDefaultMetricProperties()
 	return c
+}
+
+func (m Metric) GetMultiplier() float64 {
+	if m.Multiplier == nil {
+		return 1
+	}
+	return *m.Multiplier
+}
+
+func (m Metric) GetDivisor() float64 {
+	if m.Divisor == nil {
+		return 1
+	}
+	return *m.Divisor
 }

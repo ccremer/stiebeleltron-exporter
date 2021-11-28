@@ -117,20 +117,10 @@ func LoadMetricDefinitions(configuration *Configuration) *MetricDefinitions {
 	k := koanf.New(".")
 	err := k.Load(rawbytes.Provider(DefaultMetrics), yaml.Parser())
 	if err != nil {
-		log.WithError(err).Fatal("Could not embedded default file")
+		log.WithError(err).Fatal("Could not read embedded default file")
 	}
 	if err := k.Unmarshal("", def); err != nil {
-		log.WithError(err).Fatal("Could not read config")
-	}
-	// Set multipliers to 1 if not defined.
-	for _, page := range def.Pages {
-		for _, group := range page.Groups {
-			for _, metric := range group.Metrics {
-				if metric.Multiplier == 0 {
-					metric.Multiplier = 1
-				}
-			}
-		}
+		log.WithError(err).Fatal("Could not unmarshal config")
 	}
 
 	return def

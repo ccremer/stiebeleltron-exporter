@@ -9,6 +9,10 @@ var (
 	Namespace = "stiebeleltron"
 )
 
+type (
+	Transformer func(v float64) float64
+)
+
 type MetricProperty struct {
 	GaugeName        string
 	Labels           map[string]string
@@ -16,7 +20,7 @@ type MetricProperty struct {
 	Gauge            prometheus.Gauge
 	PropertyGroup    string
 	SearchString     string
-	ValueTransformer func(v float64) float64
+	ValueTransformer Transformer
 }
 
 func NewDefaultMetricProperties() map[string]*MetricProperty {
@@ -139,6 +143,21 @@ func NewDefaultMetricProperties() map[string]*MetricProperty {
 		}},
 	}
 	return m
+}
+
+func divisorTransformer(divisor float64) Transformer {
+	if divisor == 0 {
+		panic("Cannot use 0 as a divisor!")
+	}
+	return func(v float64) float64 {
+		return v / divisor
+	}
+}
+
+func multiplierTransformer(multiplier float64) Transformer {
+	return func(v float64) float64 {
+		return v * multiplier
+	}
 }
 
 func divideBy100(value float64) float64 {
