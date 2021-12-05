@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	log "github.com/sirupsen/logrus"
 )
 
 type (
@@ -84,10 +83,9 @@ func (c *ISGClient) findValues(doc *goquery.Document, properties properties) []P
 
 			property := properties.findProperty(group, key)
 			if property == nil {
-				log.WithFields(log.Fields{
-					"group": group,
-					"key":   key,
-				}).Debug("Property not found but not processed")
+				p = append(p, ParseError{
+					Error: fmt.Errorf("property found in document but not processed: %s/%s", group, key),
+				})
 				return
 			}
 
@@ -106,7 +104,7 @@ func (c *ISGClient) findValues(doc *goquery.Document, properties properties) []P
 	return p
 }
 
-func(c *ISGClient) findNumericValueInCell(str string) (float64, error) {
+func (c *ISGClient) findNumericValueInCell(str string) (float64, error) {
 	res := NumberRegex.FindAllStringSubmatch(str, -1)
 	if len(res) == 0 {
 		return 0, fmt.Errorf("could not find a match: " + NumberRegex.String())

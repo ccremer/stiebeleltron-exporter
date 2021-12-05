@@ -1,15 +1,15 @@
 package main
 
 import (
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
-	"net/http"
-	"os"
 	"stiebeleltron-exporter/cfg"
-	"stiebeleltron-exporter/pkg/metrics"
 	"stiebeleltron-exporter/pkg/stiebeleltron"
-	"time"
 )
 
 var (
@@ -49,24 +49,23 @@ func main() {
 
 	headers := http.Header{}
 	cfg.ConvertHeaders(config.ISG.Headers, &headers)
-	c, err := stiebeleltron.NewISGClient(stiebeleltron.ClientOptions{
-		URL:     config.ISG.URL,
+	client, err := stiebeleltron.NewISGClient(stiebeleltron.ClientOptions{
+		BaseURL: config.ISG.URL,
 		Headers: headers,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	m := MergeProperties(make(map[string]*metrics.MetricProperty), stiebeleltron.NewSystemInfoDefaultAssignments())
-	m = MergeProperties(m, stiebeleltron.NewHeatPumpInfoDefaultAssignments())
-	PrepareGauges(m)
 
-	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+	props := cfg.LoadMetricDefinitions(config).MapToPrometheusMetric()
+
+	http.HandleFunc("/metrics", func(w http.ResponseWriter, req *http.Request) {
 		log.WithFields(log.Fields{
-			"uri":    r.RequestURI,
-			"client": r.RemoteAddr,
+			"uri":    req.RequestURI,
+			"client": req.RemoteAddr,
 		}).Debug("Accessed Metrics endpoint")
-		ScrapeISG(c, m)
-		promHandler.ServeHTTP(w, r)
+		ScrapeISG(client, props)
+		promHandler.ServeHTTP(w, req)
 	})
 
 	log.WithField("port", config.BindAddr).Info("Listening for scrapes.")

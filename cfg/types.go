@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"stiebeleltron-exporter/pkg/metrics"
 )
 
 type (
@@ -22,7 +23,7 @@ type (
 		BindAddr string
 	}
 	MetricDefinitions struct {
-		Pages []Page
+		Pages map[string]Page
 	}
 	Page struct {
 		Groups    map[string]Group
@@ -33,11 +34,12 @@ type (
 		Metrics      []Metric
 	}
 	Metric struct {
-		Name        string
-		Description string
-		Multiplier  *float64
-		Divisor     *float64
-		Labels      prometheus.Labels
+		Name         string
+		Description  string
+		SearchString string
+		Multiplier   *float64
+		Divisor      *float64
+		Labels       prometheus.Labels
 	}
 )
 
@@ -63,4 +65,33 @@ func (m Metric) GetDivisor() float64 {
 		return 1
 	}
 	return *m.Divisor
+}
+
+func (definitions MetricDefinitions) MapToPrometheusMetric() map[string][]*metrics.PrometheusMetric {
+	m := make(map[string][]*metrics.PrometheusMetric, 0)
+	for _, page := range definitions.Pages {
+		perPageMetrics := make([]*metrics.PrometheusMetric, 0)
+		for groupName, group := range page.Groups {
+			for _, metric := range group.Metrics {
+				promMetric := &metrics.PrometheusMetric{
+					GaugeName:            metric.Name,
+					Group:                groupName,
+					GroupSearchString:    group.SearchString,
+					PropertySearchString: metric.SearchString,
+					HelpText:             metric.Description,
+					Labels:               metric.Labels,
+				}
+				if metric.Divisor != nil {
+					promMetric.ValueTransformer = metrics.NewDivisorTransformer(*metric.Divisor)
+				}
+				if metric.Multiplier != nil {
+					promMetric.ValueTransformer = metrics.NewMultiplierTransformer(*metric.Multiplier)
+				}
+				promMetric.InitializeMetric()
+				perPageMetrics = append(perPageMetrics, promMetric)
+			}
+		}
+		m[page.URLSuffix] = perPageMetrics
+	}
+	return m
 }
