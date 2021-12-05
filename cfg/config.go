@@ -40,23 +40,13 @@ func ParseConfig(version, commit, date string, fs *flag.FlagSet, args []string) 
 	fs.StringP("isg.url", "u", config.ISG.URL, "Target URL of Stiebel Eltron ISG device")
 	fs.Int64("isg.timeout", int64(config.ISG.Timeout.Seconds()),
 		"Timeout in seconds when collecting metrics from Stiebel Eltron ISG. Should not be larger than the scrape interval")
-	fs.String("config", "", "Configuration file that may hold translations of metric names. Accepts full and relative path to a .yaml file")
+	fs.String("isg.definitionPath", "", "Configuration file that may hold translations of metric names. Accepts full and relative path to a .yaml file. If empty, embedded defaults in English are used")
 
 	if err := fs.Parse(args); err != nil {
 		log.WithError(err).Fatal("Could not parse flags")
 	}
 
 	k := koanf.New(".")
-	path, _ := fs.GetString("config")
-	if path != "" {
-		log.WithFields(log.Fields{
-			"path": path,
-		}).Info("Loading configuration")
-		err := k.Load(file.Provider(path), yaml.Parser())
-		if err != nil {
-			log.WithError(err).Fatal("Could not load config file")
-		}
-	}
 
 	err := k.Load(env.Provider("", ".", func(s string) string {
 		return strings.Replace(strings.ToLower(s), "_", ".", -1)
@@ -112,13 +102,23 @@ func ConvertHeaders(headers []string, header *http.Header) {
 	}
 }
 
-func LoadMetricDefinitions(configuration *Configuration) *MetricDefinitions {
+// LoadMetricDefinitions loads the metrics from configured file path.
+// If the path is empty, embedded defaults are read.
+func (configuration *Configuration) LoadMetricDefinitions() *MetricDefinitions {
 	def := &MetricDefinitions{}
 	k := koanf.New(".")
-	err := k.Load(rawbytes.Provider(DefaultMetrics), yaml.Parser())
-	if err != nil {
-		log.WithError(err).Fatal("Could not read embedded default file")
+	if configuration.ISG.DefinitionPath != "" {
+		err := k.Load(file.Provider(configuration.ISG.DefinitionPath), yaml.Parser())
+		if err != nil {
+			log.WithError(err).Fatal("Could not read file")
+		}
+	} else {
+		err := k.Load(rawbytes.Provider(DefaultMetrics), yaml.Parser())
+		if err != nil {
+			log.WithError(err).Fatal("Could not read embedded default file")
+		}
 	}
+
 	if err := k.Unmarshal("", def); err != nil {
 		log.WithError(err).Fatal("Could not unmarshal config")
 	}

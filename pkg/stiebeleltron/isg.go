@@ -1,7 +1,6 @@
 package stiebeleltron
 
 import (
-	_ "embed"
 	"fmt"
 	"net/http"
 	"regexp"

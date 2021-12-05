@@ -30,7 +30,7 @@ var (
 	})
 )
 
-func ScrapeISG(c *stiebeleltron.ISGClient, m map[string][]*metrics.PrometheusMetric) {
+func scrapeISG(c *stiebeleltron.ISGClient, m map[string][]*metrics.PrometheusMetric) {
 	start := time.Now()
 	defer func() {
 		scrapeDurationGauge.Set(time.Since(start).Seconds())
@@ -60,7 +60,7 @@ func fanoutScrape(c *stiebeleltron.ISGClient, m map[string][]*metrics.Prometheus
 			for i := range metricList {
 				list[i] = metricList[i]
 			}
-			go scape(urlSuffix, list, c, respChan, wg)
+			go scrapeSinglePage(urlSuffix, list, c, respChan, wg)
 		}
 		wg.Wait()
 		respChan <- nil
@@ -68,7 +68,7 @@ func fanoutScrape(c *stiebeleltron.ISGClient, m map[string][]*metrics.Prometheus
 	return respChan
 }
 
-func scape(urlSuffix string, metricList []stiebeleltron.Property, c *stiebeleltron.ISGClient, respChan chan error, wg *sync.WaitGroup) {
+func scrapeSinglePage(urlSuffix string, metricList []stiebeleltron.Property, c *stiebeleltron.ISGClient, respChan chan error, wg *sync.WaitGroup) {
 	defer wg.Done()
 	scrapeLog := log.WithFields(log.Fields{"page": urlSuffix})
 	parseErrors, err := c.ParsePage(urlSuffix, metricList)

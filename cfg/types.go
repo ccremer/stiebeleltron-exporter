@@ -53,20 +53,7 @@ func NewDefaultExporterConfig() *Configuration {
 	return c
 }
 
-func (m Metric) GetMultiplier() float64 {
-	if m.Multiplier == nil {
-		return 1
-	}
-	return *m.Multiplier
-}
-
-func (m Metric) GetDivisor() float64 {
-	if m.Divisor == nil {
-		return 1
-	}
-	return *m.Divisor
-}
-
+// MapToPrometheusMetric transforms given config from into Prometheus metric objects.
 func (definitions MetricDefinitions) MapToPrometheusMetric() map[string][]*metrics.PrometheusMetric {
 	m := make(map[string][]*metrics.PrometheusMetric, 0)
 	for _, page := range definitions.Pages {

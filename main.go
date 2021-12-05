@@ -57,14 +57,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	props := cfg.LoadMetricDefinitions(config).MapToPrometheusMetric()
+	props := config.LoadMetricDefinitions().MapToPrometheusMetric()
 
 	http.HandleFunc("/metrics", func(w http.ResponseWriter, req *http.Request) {
 		log.WithFields(log.Fields{
 			"uri":    req.RequestURI,
 			"client": req.RemoteAddr,
 		}).Debug("Accessed Metrics endpoint")
-		ScrapeISG(client, props)
+		scrapeISG(client, props)
 		promHandler.ServeHTTP(w, req)
 	})
 
