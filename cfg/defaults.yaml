@@ -13,16 +13,20 @@ pages:
             description: Condenser temperature in degree Celsius
           - name: flow
             searchString: FLOW RATE
+            description: flow rate in l/s
             divisor: 60
           - name: heating_circuit_pressure
             searchString: PRESSURE HTG CIRC
+            description: pressure in heating in bar
           - name: output_activity
             searchString: OUTPUT HP
+            description: pump activity in percentage
             divisor: 100
             labels:
               pump: heat
           - name: output_activity
             searchString: INT PUMP RATE
+            description: pump activity in percentage
             divisor: 100
             labels:
               pump: water
@@ -37,16 +41,19 @@ pages:
               state: actual
           - name: heating_circuit
             searchString: SET TEMPERATURE HC 1
+            description: room temperature in degree Celsius
             labels:
               circuit: hc1
               state: target
           - name: heating_circuit
             searchString: ACTUAL TEMPERATURE HC 2
+            description: room temperature in degree Celsius
             labels:
               circuit: hc2
               state: actual
           - name: heating_circuit
             searchString: SET TEMPERATURE HC 2
+            description: room temperature in degree Celsius
             labels:
               circuit: hc2
               state: target
@@ -55,10 +62,12 @@ pages:
         metrics:
           - name: temperature
             searchString: ACTUAL TEMPERATURE
+            description: domestic hotwater temperature in degree Celsius
             labels:
               state: actual
           - name: temperature
             searchString: SET TEMPERATURE
+            description: domestic hotwater temperature in degree Celsius
             labels:
               state: target
       electric_reheating:
@@ -66,15 +75,20 @@ pages:
         metrics:
           - name: dualmode_reheating_temperature
             searchString: DUAL MODE TEMP HEATING
+            description: temperature in degree Celsius
             labels:
               temperature: heating
           - name: dualmode_reheating_temperature
             searchString: DUAL MODE TEMP DHW
+            description: temperature in degree Celsius
             labels:
               temperature: domestic_hotwater
       heating:
         searchString: HEATING
         metrics:
+          - name: outside_temperature
+            searchString: OUTSIDE TEMPERATURE
+            description: outside temperature in degree Celsius
           - name: temperature
             searchString: ACTUAL TEMPERATURE HC 1
             description: heating temperature in degree Celsius
@@ -83,44 +97,53 @@ pages:
               state: actual
           - name: temperature
             searchString: SET TEMPERATURE HC 1
+            description: heating temperature in degree Celsius
             labels:
               circuit: hc1
               state: target
           - name: temperature
             searchString: ACTUAL TEMPERATURE HC 2
+            description: heating temperature in degree Celsius
             labels:
               circuit: hc2
               state: actual
           - name: temperature
             searchString: SET TEMPERATURE HC 2
+            description: heating temperature in degree Celsius
             labels:
               circuit: hc2
               state: target
           - name: flow_temperature
             searchString: ACTUAL FLOW TEMPERATURE WP
+            description: flow temperature in degree Celsius
             labels:
               state: actual
               type: heatpump
           - name: flow_temperature
             searchString: ACTUAL FLOW TEMPERATURE NHZ
+            description: flow temperature in degree Celsius
             labels:
               state: actual
               type: reheating
           - name: flow_temperature
             searchString: ACTUAL RETURN TEMPERATURE
+            description: flow temperature in degree Celsius
             labels:
               state: actual
               type: preflow
           - name: buffer_temperature
             searchString: ACTUAL BUFFER TEMPERATURE
+            description: buffer temperature in degree Celsius
             labels:
               state: actual
           - name: buffer_temperature
             searchString: SET BUFFER TEMPERATURE
+            description: buffer temperature in degree Celsius
             labels:
               state: target
           - name: fixed_temperature
             searchString: SET FIXED TEMPERATURE
+            description: temperature in degree Celsius
             labels:
               state: target
 
@@ -132,12 +155,13 @@ pages:
         metrics:
           - name: compressor
             searchString: RNT COMP 1 HEA
-            description: compressor runtime in percent
+            description: compressor runtime in s
             labels:
               compressor: heating
             multiplier: 3600
           - name: compressor
             searchString: RNT COMP 1 DHW
+            description: compressor runtime in s
             labels:
               compressor: domestic_hotwater
             multiplier: 3600
@@ -154,27 +178,44 @@ pages:
       energy:
         searchString: AMOUNT OF HEAT
         metrics:
-          - name: heating_day
+          - name: heating_total
             searchString: COMPRESSOR HEATING DAY
-            description: compressor heat energy today in Ws
+            description: compressor energy in Ws
+            labels:
+              compressor: heating
+              timeframe: day
             multiplier: 3.6e+6
           - name: heating_total
             searchString: COMPRESSOR HEATING TOTAL
-            description: compressor heat energy total in Ws
+            description: compressor energy in Ws
+            labels:
+              compressor: heating
+              timeframe: total
             multiplier: 3.6e+9
           - name: heating_total
             searchString: COMPRESSOR DHW DAY
-            description: domestic hotwater compressor heat energy today in Ws
+            description: compressor energy in Ws
+            labels:
+              compressor: dhw
+              timeframe: day
             multiplier: 3.6e+6
           - name: heating_total
             searchString: COMPRESSOR DHW TOTAL
-            description: domestic hotwater compressor heat energy total in Ws
+            description: compressor energy in Ws
+            labels:
+              compressor: dhw
+              timeframe: total
             multiplier: 3.6e+9
           - name: heating_total
             searchString: BH HEATING TOTAL
+            description: compressor energy in Ws
             multiplier: 3.6e+9
+            labels:
+              compressor: bh # whatever that is
+              timeframe: total
       process_data:
         searchString: PROCESS DATA
         metrics:
           - name: compressor_delay_counter
             searchString: COMP DLAY CNTR
+            description: compressor delay counter in s
