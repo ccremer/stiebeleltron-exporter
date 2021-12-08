@@ -2,4 +2,5 @@
 # Visit the documentation at https://ccremer.github.io/greposync
 
 .github/workflows/test.yml:
-  codeclimateReporterID: a1d37ef5008cd3d7e3811e3e7cc83708acd23250124ebbcdbe51f7c23e5bcb24
+  codeclimate:
+    reporterID: a1d37ef5008cd3d7e3811e3e7cc83708acd23250124ebbcdbe51f7c23e5bcb24
