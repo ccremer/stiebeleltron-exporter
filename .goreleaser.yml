@@ -1,54 +1,47 @@
 # This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
 builds:
-- env:
-  - CGO_ENABLED=0 # this is needed otherwise the Docker image build is faulty
-  goarch:
-  - amd64
-  goos:
-  - linux
+  - env:
+      - CGO_ENABLED=0 # this is needed otherwise the Docker image build is faulty
+    goarch:
+      - amd64
+    goos:
+      - linux
 
 archives:
-- format: binary
-  name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+  - format: binary
+    name_template: "{{ .Binary }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
 
 checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ .Tag }}-snapshot"
+  name_template: "{{ incpatch .Version }}-snapshot"
 
 signs:
-- artifacts: checksum
-  args: ["-u", "8DB7AF3F5520B923DACB3DC15703DBD91B244ED4", "--output", "${signature}", "--detach-sign", "${artifact}"]
+  - artifacts: checksum
+    args: ["-u", "8DB7AF3F5520B923DACB3DC15703DBD91B244ED4", "--output", "${signature}", "--detach-sign", "${artifact}"]
 
 dockers:
-- image_templates:
-  - "docker.io/ccremer/stiebeleltron-exporter:v{{ .Version }}"
-  - "docker.io/ccremer/stiebeleltron-exporter:v{{ .Major }}"
+  - image_templates:
+      - "quay.io/ccremer/stiebeleltron-exporter:v{{ .Version }}"
+      - "ghcr.io/ccremer/stiebeleltron-exporter:v{{ .Version }}"
+
+        # For prereleases, updating `latest` does not make sense.
+      # Only the image for the exact version should be pushed.
+      - "{{ if not .Prerelease }}quay.io/ccremer/stiebeleltron-exporter:latest{{ end }}"
+      - "{{ if not .Prerelease }}ghcr.io/ccremer/stiebeleltron-exporter:latest{{ end }}"
 
 nfpms:
-- vendor: ccremer
-  homepage: https://github.com/ccremer/stiebeleltron-exporter
-  maintainer: ccremer
-  description: Prometheus Exporter for Stiebel-Eltron ISG Heat Pump
-  license: Apache 2.0
-  file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
-  formats:
-  - deb
-  - rpm
-
-changelog:
-  sort: asc
-  filters:
-    exclude:
-    - '^Docs:'
-    - '^Test:'
-    - '^Refactor:'
-    - '^Merge pull request'
-    - '^GH:'
+  - vendor: ccremer
+    homepage: https://github.com/ccremer/stiebeleltron-exporter
+    maintainer: ccremer
+    description: Prometheus Exporter for Stiebel-Eltron ISG Heat Pump
+    license: Apache 2.0
+    file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - deb
+      - rpm
 
 release:
-  github:
-    owner: ccremer
-    name: stiebeleltron-exporter
+  prerelease: auto
