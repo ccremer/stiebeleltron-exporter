@@ -1,4 +1,4 @@
-module stiebeleltron-exporter
+module github.com/ccremer/stiebeleltron-exporter
 
 go 1.16
 

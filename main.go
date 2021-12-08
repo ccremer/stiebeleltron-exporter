@@ -5,11 +5,11 @@ import (
 	"os"
 	"time"
 
+	"github.com/ccremer/stiebeleltron-exporter/cfg"
+	"github.com/ccremer/stiebeleltron-exporter/pkg/stiebeleltron"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	flag "github.com/spf13/pflag"
-	"stiebeleltron-exporter/cfg"
-	"stiebeleltron-exporter/pkg/stiebeleltron"
 )
 
 var (

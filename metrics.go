@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ccremer/stiebeleltron-exporter/pkg/metrics"
+	"github.com/ccremer/stiebeleltron-exporter/pkg/stiebeleltron"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	log "github.com/sirupsen/logrus"
-	"stiebeleltron-exporter/pkg/metrics"
-	"stiebeleltron-exporter/pkg/stiebeleltron"
 )
 
 var (

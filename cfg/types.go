@@ -3,8 +3,8 @@ package cfg
 import (
 	"time"
 
+	"github.com/ccremer/stiebeleltron-exporter/pkg/metrics"
 	"github.com/prometheus/client_golang/prometheus"
-	"stiebeleltron-exporter/pkg/metrics"
 )
 
 type (

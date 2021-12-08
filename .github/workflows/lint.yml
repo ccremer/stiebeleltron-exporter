@@ -1,18 +1,13 @@
 # This file is managed by greposync.
 # Do not modify manually.
 # Adjust variables in `.sync.yml`.
-name: Build
+name: Lint
 
 on:
-  pull_request:
-    branches:
-      - master
-  push:
-    branches:
-      - master
+  pull_request: {}
 
 jobs:
-  docker:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -31,8 +26,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Build binary
-        run: make build
-
-      - name: Build docker
-        run: make build.docker
+      - name: Run linters
+        run: make lint
