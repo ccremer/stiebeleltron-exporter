@@ -17,7 +17,6 @@ image:https://img.shields.io/codeclimate/maintainability/ccremer/stiebeleltron-e
 image:https://img.shields.io/codeclimate/coverage/ccremer/stiebeleltron-exporter[Tests,link=https://codeclimate.com/github/ccremer/stiebeleltron-exporter]
 image:https://img.shields.io/github/v/release/ccremer/stiebeleltron-exporter[Releases,link=https://github.com/ccremer/stiebeleltron-exporter/releases]
 image:https://img.shields.io/github/license/ccremer/stiebeleltron-exporter[License,link=https://github.com/ccremer/stiebeleltron-exporter/blob/master/LICENSE]
-image:https://img.shields.io/docker/pulls/ccremer/stiebeleltron-exporter[Docker image,link=https://hub.docker.com/r/ccremer/stiebeleltron-exporter]
 endif::[]
 
 == About
@@ -36,7 +35,7 @@ It has been tested with ISG 10.2.0.
 
 === Docker
 
-. `docker run -d --name stiebeleltron-exporter -p "8080:8080" ccremer/stiebeleltron-exporter`
+. `docker run -d --name stiebeleltron-exporter -p "8080:8080" ghcr.io/ccremer/stiebeleltron-exporter`
 
 === Helm Chart
 
@@ -46,19 +45,19 @@ _not yet existing_
 
 [source,console]
 ----
-stiebeleltron-exporter
+stiebeleltron-exporter --isg.url http://isg.ip.or.hostname
 ----
 
-Upon each call to `/metrics`, the exporter will do a GET request on the given URL, and translate the JSON
-response to Prometheus metrics format.
+Upon each call to `/metrics`, the exporter will do GET requests on the given URL, and translate the HTML responses to Prometheus metrics format.
 
 == Configuration
 
 `stiebeleltron-exporter` can be configured with CLI flags. Call the binary with `--help` to get a list of options.
 
-TIP: All flags are also configurable with Environment variables. Replace the `.` char with `_` and
-     uppercase the names in order for them to be recognized, e.g. `--log.level debug` becomes
-     `LOG_LEVEL=debug`. CLI flags take precedence though.
+[TIP]
+All flags are also configurable with Environment variables.
+Replace the `.` char with `_` and uppercase the names in order for them to be recognized, e.g. `--log.level debug` becomes `LOG_LEVEL=debug`.
+CLI flags take precedence though.
 
 == As a client API
 
@@ -66,15 +65,8 @@ See link:examples/client.go[Example]
 
 == Developing
 
-=== Requirements
+Requirements:
 
 * Go
-* https://github.com/goreleaser/goreleaser[Goreleaser] (for packaging)
 
-=== Building
-
-. `make build`
-
-=== Tests
-
-. `make test`
+`make help` shows a list of possible tasks.
