@@ -18,13 +18,13 @@ pages:
           - name: heating_circuit_pressure
             searchString: PRESSURE HTG CIRC
             description: pressure in heating in bar
-          - name: output_activity
+          - name: output_activity_ratio
             searchString: OUTPUT HP
             description: pump activity in percentage
             divisor: 100
             labels:
               pump: heat
-          - name: output_activity
+          - name: output_activity_ratio
             searchString: INT PUMP RATE
             description: pump activity in percentage
             divisor: 100
