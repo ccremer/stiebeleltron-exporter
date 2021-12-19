@@ -77,12 +77,12 @@ pages:
             searchString: DUAL MODE TEMP HEATING
             description: temperature in degree Celsius
             labels:
-              temperature: heating
+              sensor: heating
           - name: dualmode_reheating_temperature
             searchString: DUAL MODE TEMP DHW
             description: temperature in degree Celsius
             labels:
-              temperature: domestic_hotwater
+              sensor: domestic_hotwater
       heating:
         searchString: HEATING
         metrics:
