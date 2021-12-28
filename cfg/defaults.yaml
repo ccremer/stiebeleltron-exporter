@@ -5,9 +5,6 @@ pages:
       general:
         searchString: GENERAL
         metrics:
-          - name: temperature_outside
-            searchString: OUTSIDE TEMPERATURE
-            description: Outside temperature in degree Celsius
           - name: temperature_condenser
             searchString: CONDENSER TEMP.
             description: Condenser temperature in degree Celsius
