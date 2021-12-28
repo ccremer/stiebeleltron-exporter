@@ -18,13 +18,13 @@ pages:
           - name: heating_circuit_pressure
             searchString: PRESSURE HTG CIRC
             description: pressure in heating in bar
-          - name: output_activity
+          - name: output_activity_ratio
             searchString: OUTPUT HP
             description: pump activity in percentage
             divisor: 100
             labels:
               pump: heat
-          - name: output_activity
+          - name: output_activity_ratio
             searchString: INT PUMP RATE
             description: pump activity in percentage
             divisor: 100
@@ -77,12 +77,12 @@ pages:
             searchString: DUAL MODE TEMP HEATING
             description: temperature in degree Celsius
             labels:
-              temperature: heating
+              sensor: heating
           - name: dualmode_reheating_temperature
             searchString: DUAL MODE TEMP DHW
             description: temperature in degree Celsius
             labels:
-              temperature: domestic_hotwater
+              sensor: domestic_hotwater
       heating:
         searchString: HEATING
         metrics:
@@ -196,14 +196,14 @@ pages:
             searchString: COMPRESSOR DHW DAY
             description: compressor energy in Ws
             labels:
-              compressor: dhw
+              compressor: domestic_hotwater
               timeframe: day
             multiplier: 3.6e+6
           - name: heating_total
             searchString: COMPRESSOR DHW TOTAL
             description: compressor energy in Ws
             labels:
-              compressor: dhw
+              compressor: domestic_hotwater
               timeframe: total
             multiplier: 3.6e+9
           - name: heating_total
