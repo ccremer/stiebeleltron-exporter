@@ -5,8 +5,12 @@ builds:
       - CGO_ENABLED=0 # this is needed otherwise the Docker image build is faulty
     goarch:
       - amd64
+      - arm64
+      - arm
     goos:
       - linux
+    goarm:
+      - 7
 
 archives:
   - format: binary
@@ -23,14 +27,42 @@ signs:
     args: ["-u", "8DB7AF3F5520B923DACB3DC15703DBD91B244ED4", "--output", "${signature}", "--detach-sign", "${artifact}"]
 
 dockers:
-  - image_templates:
-      - "quay.io/ccremer/stiebeleltron-exporter:v{{ .Version }}"
-      - "ghcr.io/ccremer/stiebeleltron-exporter:v{{ .Version }}"
+  - goarch: amd64
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/amd64"
+    image_templates:
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-amd64"
 
-        # For prereleases, updating `latest` does not make sense.
-      # Only the image for the exact version should be pushed.
-      - "{{ if not .Prerelease }}quay.io/ccremer/stiebeleltron-exporter:latest{{ end }}"
-      - "{{ if not .Prerelease }}ghcr.io/ccremer/stiebeleltron-exporter:latest{{ end }}"
+  - goarch: arm64
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm64/v8"
+    image_templates:
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-arm64"
+
+  - goarch: arm
+    goarm: "7"
+    use: buildx
+    build_flag_templates:
+      - "--platform=linux/arm/v7"
+    image_templates:
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-armv7"
+
+docker_manifests:
+  # For prereleases, updating `latest` does not make sense.
+  # Only the image for the exact version should be pushed.
+  - name_template: "{{ if not .Prerelease }}ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:latest{{ end }}"
+    image_templates:
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-amd64"
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-arm64"
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-armv7"
+
+  - name_template: "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}"
+    image_templates:
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-amd64"
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-arm64"
+      - "ghcr.io/{{ .Env.IMAGE_REPOSITORY }}:v{{ .Version }}-armv7"
 
 nfpms:
   - vendor: ccremer
