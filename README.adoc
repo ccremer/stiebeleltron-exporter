@@ -26,12 +26,23 @@ It has been tested with ISG 10.2.0.
 
 == Installing
 
-=== Traditional packages or binary
 
-. Download latest binary or package from the https://github.com/ccremer/stiebeleltron-exporter/releases[Releases page]
+=== Binary
+
+. Download latest binary from the https://github.com/ccremer/stiebeleltron-exporter/releases[Releases page]
+. `chmod +x stiebeleltron-exporter && mv stiebeleltron-exporter /usr/local/bin/`
+
+=== Package
+
+Comes with systemd unit file.
+
+. Download latest package from the https://github.com/ccremer/stiebeleltron-exporter/releases[Releases page]
 . `dpkg -i stiebeleltron-exporter_linux_amd64.deb` (Debian/Ubuntu)
 . `rpm -i stiebeleltron-exporter_linux_amd64.rpm` (CentOS)
-. `chmod +x stiebeleltron-exporter && mv stiebeleltron-exporter /usr/local/bin/`
+. `sudo systemctl daemon-reload`
+. Edit the settings in `/etc/default/stiebeleltron-exporter`
+. `sudo systemctl enable stiebeleltron-exporter`
+. `sudo systemctl restart stiebeleltron-exporter`
 
 === Docker
 
@@ -39,7 +50,10 @@ It has been tested with ISG 10.2.0.
 
 === Helm Chart
 
-_not yet existing_
+With https://ccremer.github.io/charts/stiebeleltron-exporter[stiebeleltron-exporter]
+
+. `helm repo add ccremer https://ccremer.github.io/charts`
+. `helm install stiebeleltron ccremer/stiebeleltron-exporter`
 
 == Usage
 
@@ -58,10 +72,6 @@ Upon each call to `/metrics`, the exporter will do GET requests on the given URL
 All flags are also configurable with Environment variables.
 Replace the `.` char with `_` and uppercase the names in order for them to be recognized, e.g. `--log.level debug` becomes `LOG_LEVEL=debug`.
 CLI flags take precedence though.
-
-== As a client API
-
-See link:examples/client.go[Example]
 
 == Developing
 

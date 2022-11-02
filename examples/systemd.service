@@ -1,0 +1,16 @@
+# This is a systemd unit file
+[Unit]
+Description=Prometheus Exporter for Stiebel-Eltron ISG Heat Pump
+Documentation=https://github.com/ccremer/stiebeleltron-exporter
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+EnvironmentFile=-/etc/default/stiebeleltron-exporter
+User=65534
+Group=0
+ExecStart=/usr/bin/stiebeleltron-exporter
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

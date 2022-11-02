@@ -42,6 +42,12 @@ nfpms:
     formats:
       - deb
       - rpm
+    contents:
+      - src: examples/systemd.service
+        dst: /lib/systemd/system/stiebeleltron-exporter.service
+      - src: examples/systemd.env
+        dst: /etc/default/stiebeleltron-exporter
+        type: config
 
 release:
   prerelease: auto
