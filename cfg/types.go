@@ -20,7 +20,7 @@ type (
 			Headers        []string `koanf:"header"`
 			DefinitionPath string
 		}
-		BindAddr string
+		BindAddr string `koanf:"bindaddr"`
 	}
 	MetricDefinitions struct {
 		Pages map[string]Page
