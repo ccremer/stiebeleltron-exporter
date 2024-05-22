@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.17 as runtime
+FROM docker.io/library/alpine:3.20 as runtime
 
 ENTRYPOINT ["stiebeleltron-exporter"]
 
